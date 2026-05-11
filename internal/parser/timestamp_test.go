@@ -67,4 +67,8 @@ func TestInRange(t *testing.T) {
 	if !InRange(after, before, time.Time{}) {
 		t.Error("expected unbounded-to range to include after")
 	}
+	// Both unbounded
+	if !InRange(base, time.Time{}, time.Time{}) {
+		t.Error("expected fully unbounded range to include any value")
+	}
 }

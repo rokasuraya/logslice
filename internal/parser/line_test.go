@@ -89,3 +89,26 @@ func TestLineParser_ParseLines(t *testing.T) {
 		t.Error("expected both lines to have timestamps")
 	}
 }
+
+func TestLineParser_ParseLines_WithFilter(t *testing.T) {
+	filter, err := ParseFieldFilter("level=info")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	lp := NewLineParser(nil, []FieldFilter{filter})
+	raws := []string{
+		`2024-01-15T10:00:00Z level=info msg="start"`,
+		`2024-01-15T10:01:00Z level=error msg="fail"`,
+		`2024-01-15T10:02:00Z level=info msg="done"`,
+	}
+	lines := lp.ParseLines(raws)
+
+	if len(lines) != 2 {
+		t.Fatalf("expected 2 lines after filtering, got %d", len(lines))
+	}
+	for _, line := range lines {
+		if line.Fields["level"] != "info" {
+			t.Errorf("expected only info lines, got level=%q", line.Fields["level"])
+		}
+	}
+}

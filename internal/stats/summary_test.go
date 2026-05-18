@@ -45,3 +45,21 @@ func TestSummary_Print_ContainsFields(t *testing.T) {
 		}
 	}
 }
+
+func TestSummary_Print_ZeroElapsed(t *testing.T) {
+	s := Summary{
+		TotalLines:   10,
+		MatchedLines: 10,
+		SkippedLines: 0,
+		Elapsed:      0,
+	}
+	var buf bytes.Buffer
+	s.Print(&buf)
+	out := buf.String()
+
+	for _, want := range []string{"10", "100.0%", "0s"} {
+		if !strings.Contains(out, want) {
+			t.Errorf("expected output to contain %q, got:\n%s", want, out)
+		}
+	}
+}

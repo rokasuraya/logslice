@@ -1,11 +1,12 @@
-// Package transform provides post-parse log line transformations applied
-// before output. Current transformations include:
+// Package transform provides composable, line-level transformations for
+// structured log output. Transformations operate on raw log lines (strings)
+// and are applied after filtering but before writing to the output.
 //
-//   - Redaction: replace sensitive field values (e.g. passwords, tokens)
-//     with a configurable placeholder string so that filtered output never
-//     leaks credentials into terminals or downstream pipelines.
+// Available transformations:
 //
-// Transformers are designed to be composable and zero-allocation when no
-// fields are configured, making them safe to include unconditionally in the
-// hot path of the line-processing loop.
+//	- Redactor  – replaces sensitive field values with a placeholder.
+//	- Truncator – truncates long field values or entire lines to a max length.
+//	- Renamer   – renames fields, supporting key=value and JSON-style formats.
+//
+// Transformations can be chained by applying them sequentially to a line.
 package transform
